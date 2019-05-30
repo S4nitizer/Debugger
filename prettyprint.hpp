@@ -16,10 +16,13 @@ string to_string(bool t){
     return t ? "true" : "false";
 }
 
-string to_string(const string &t, int x1=0, int x2=1e9){
+string to_string(const string &t, int x = 0, int y = 1e9){
+    x = min(x, SIZE(t));
+    y = min(y, SIZE(t)-1);
+    
     string ret = "";
-    for(int i = min(x1,SIZE(t)), _i = min(x2,SIZE(t)-1); i <= _i; ++i){
-        ret += t[i];
+    for(; x <= y; ++x){
+        ret += t[x];
     }
     return '"' + ret + '"';
 }
@@ -30,16 +33,19 @@ string to_string(const char* t){
 }
 
 template<size_t N>
-string to_string(const bitset<N> &t, int x1=0, int x2=1e9){
+string to_string(const bitset<N> &t, int x = 0, int y = 1e9){
+    x = min(x, SIZE(t));
+    y = min(y, SIZE(t)-1);
+    
     string ret = "";
-    for(int i = min(x1,SIZE(t)); i <= min(x2,SIZE(t)-1); ++i){
-        ret += t[i] + '0';
+    for(; x <= y; ++x){
+        ret += t[x] + '0';
     }
-    return to_string(ret);
+    return '"' + ret + '"';
 }
 
 template<typename T, typename... Coords>
-string to_string(const T (&t), int x1=0, int x2=1e9, Coords... C);
+string to_string(const T (&t), int x = 0, int y = 1e9, Coords... C);
 
 template<typename T, typename S>
 string to_string(const pair<T, S> &t){
@@ -47,21 +53,19 @@ string to_string(const pair<T, S> &t){
 }
 
 template<typename T, typename... Coords>
-string to_string(const T (&t), int x1, int x2, Coords... C){
+string to_string(const T (&t), int x, int y, Coords... C){
+    x = min(x, SIZE(t));
+    y = min(y, SIZE(t)-1);
+
     string ret = "[";
-    x1 = min(x1, SIZE(t));
     auto e = begin(t);
-    advance(e,x1);
-    for(int i = x1, _i = min(x2,SIZE(t)-1); i <= _i; ++i){
-        ret += to_string(*e, C...) + (i != _i ? ", " : "");
+    advance(e,x);
+    for(; x <= y; ++x){
+        ret += to_string(*e, C...) + (x != y ? ", " : "");
         e = next(e);
     }
     return ret + "]";
 }
-
-#define dbgv(...) cout << to_string(__VA_ARGS__) << endl;
-
-#define dbg(...) cout << "[" << #__VA_ARGS__ << "]: "; dbgv(__VA_ARGS__);
 
 void dbgr(){;}
 template<typename Heads, typename... Tails>
@@ -70,8 +74,6 @@ void dbgr(Heads H, Tails... T){
     dbgr(T...);
 }
 
-#define dbgr(...) dbgr(__VA_ARGS__); cout << endl;
-
 void dbgm(){;}
 template<typename Heads, typename... Tails>
 void dbgm(Heads H, Tails... T){
@@ -79,11 +81,15 @@ void dbgm(Heads H, Tails... T){
     dbgm(T...);
 }
 
-#define dbgm(...) cout << "[" << #__VA_ARGS__ << "]: "; dbgr(__VA_ARGS__);
-
 void dbgs(){;}
 template<typename Heads, typename... Tails>
 void dbgs(Heads H, Tails... T){
     cout << H << " ";
     dbgs(T...);
 }
+
+#define dbgv(...) cout << to_string(__VA_ARGS__) << endl;
+#define dbg(...) cout << "[" << #__VA_ARGS__ << "]: "; dbgv(__VA_ARGS__);
+#define dbgp(...) cout << "[" << #__VA_ARGS__ << "]: "; dbgr(__VA_ARGS__); cout << " ";
+#define dbgr(...) dbgr(__VA_ARGS__); cout << endl;
+#define dbgm(...) cout << "[" << #__VA_ARGS__ << "]: "; dbgr(__VA_ARGS__);
